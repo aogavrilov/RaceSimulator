@@ -7,7 +7,7 @@ protected:
     size_t type;
     string name;
     Vehicle(float speed, string name) : speed(speed), name(name){}
-    float Calculate=0;
+   // float Calculate = 0;
 public:
     size_t  GetType(){
         return type;
@@ -15,6 +15,8 @@ public:
     string GetName(){
         return name;
     }
+
+    virtual float Calculate(float dist) = 0;
 };
 class AirTransport : public Vehicle{
     vector<float> delta_percent;
