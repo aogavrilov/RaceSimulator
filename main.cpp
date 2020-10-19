@@ -30,6 +30,7 @@ public:
         else{
             return (1 - percents[count]/100);
         }
+        // 1, 2,3
     }
     float Calculate(float distance){
         if(distance > 1000){
@@ -103,19 +104,16 @@ public:
     MyException(string reason) : m_error(reason){}
     const char* getError() { return m_error.c_str(); }
 };
+template <class T>
 class Race{
-protected:
-    Race(){}
-};
-class AirRace : Race{
-    vector<AirTransport> air;
-    size_t type;
-public:
-    AirRace(vector<AirTransport> air, size_t type) : air(air), type(type){}
 
-    AirTransport* Calculate(int dist){
+    vector<T> air;
+public:
+    Race<T>(vector<T> air) : air(air){}
+
+    T* Calculate(int dist){
         int winner_time = air.begin()->Calculate(dist);
-        AirTransport* winner_transport = air.begin().base();
+        T* winner_transport = air.begin().base();
         for(auto iter = (++air.begin()); iter != air.end(); iter++){
             float temp = iter->Calculate(dist);
             if(temp < winner_time){
@@ -127,27 +125,9 @@ public:
 
     }
 
-};
-class LandRace : Race{
-    vector<LandTransport> landveh;
-    size_t type;
-public:
-    LandRace(vector<LandTransport> landveh, size_t type) : landveh(landveh), type(type){}
-    LandTransport* Calculate(int dist){
-        int winner_time = landveh.begin()->Calculate(dist);
-        LandTransport* winner_transport = landveh.begin().base();
-        for(auto iter = (++landveh.begin()); iter != landveh.end(); iter++){
-            float temp = iter->Calculate(dist);
-            if(temp < winner_time){
-                winner_time = temp;
-                winner_transport = iter.base();
-            }
-        }
-        return winner_transport;
-    }
-};
 
-class MixedRace : Race{
+};
+class MixedRace{
     vector<LandTransport> landveh;
     vector<AirTransport> air;
     size_t type;
@@ -196,13 +176,17 @@ int main() {
     AirTransport magic_carpet = AirTransport(10, "magic carpet", {0, 3, 3, 3, 3, 3, 10, 10, 10, 10, 10, 5});
     AirTransport mortar = AirTransport(8, "mortar", {6});
 
-    AirTransport broom = AirTransport(20, "broom", {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-    AirTransport testveh = AirTransport(200, "test vehicle",  {0});
-    AirRace race = AirRace({magic_carpet, mortar, broom, testveh}, 2);
 
-    LandRace race2 = LandRace({bactrian_camel, speed_camel, centaur, running_boots}, 2);
+    AirTransport broom = AirTransport(20, "broom", {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+
+
+
+    AirTransport testveh = AirTransport(200, "test vehicle",  {0});
+    Race<AirTransport> race = Race<AirTransport>({magic_carpet, mortar, broom, testveh});
+
+    Race<LandTransport> race2 = Race<LandTransport>({bactrian_camel, speed_camel, centaur, running_boots});
     MixedRace race3 = MixedRace({bactrian_camel, speed_camel, centaur, running_boots}, {magic_carpet, mortar, broom});
-    cout << race3.Calculate(1000)->GetName();
+    cout << race.Calculate(1000)->GetName();
     //cout << broom.Calculate(2000);
     //cout << race2.Calculate(1000)->Calculate(1000);
 
